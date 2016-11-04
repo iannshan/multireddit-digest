@@ -10,15 +10,18 @@ var IndexRoute = router.IndexRoute;
 var store = require('./store');
 
 var App = require('./components/app');
+var MainForm = require('./components/main-form');
 var DigestListContainer = require('./components/digest-list-container');
 
 var routes = (
+  <Provider store={store}>
     <Router history={hashHistory}>
         <Route path="/" component={App}>
-          <IndexRoute component={MainForm} />
-          <Route path="digest" component={DigestListContainer} />
+          <IndexRoute component={MainForm}/>
+          <Route path="/digest" component={DigestListContainer} />
         </Route>
     </Router>
+  </Provider>
 );
 
 document.addEventListener('DOMContentLoaded', function() {

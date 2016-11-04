@@ -3,15 +3,10 @@ var React = require('react');
 var Subreddit = require('./subreddit');
 
 var SubredditList = function(props) {
-  var multireddit = Object.keys(props.multireddit).map(function(subredditId, index) {
-    var subreddit = props.multireddit[subredditId];
-    return (
-      <li key={index}>
-        <Subreddit id={subreddit.id} name={subreddit.name}
-                 posts={subreddit.posts} />
-      </li>
-    );
-  });
+  var multireddit = [];
+  for (var i = 0; i < props.multiredditData.length; i++) {
+    multireddit.push(<Subreddit key={i} name={props.multiredditData[i].name} data={props.multiredditData[i].data} />);
+  }
   return (
     <ul>
       {multireddit}

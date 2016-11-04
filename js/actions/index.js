@@ -1,17 +1,18 @@
 var fetch = require('isomorphic-fetch');
 
 var NEW_DIGEST = 'NEW_DIGEST';
-var newGame = function() {
+var newDigest = function() {
   return {
     type: NEW_DIGEST
   };
 };
 
 var FETCH_SUBDATA_SUCCESS = 'FETCH_SUBDATA_SUCCESS';
-var fetchSubdataSuccess = function(data) {
+var fetchSubdataSuccess = function(name, data) {
   return {
     type: FETCH_SUBDATA_SUCCESS,
-    subdata: data
+    name: name,
+    data: data
   };
 };
 
@@ -23,11 +24,9 @@ var fetchSubdataError = function(error) {
   };
 };
 
-var fetchSubdata = function(multireddit) {
-  //process multireddit url data to get array of subs
-  //asynchronously fetch the posts for each sub
+var fetchSubdata = function(subreddit) {
   return function(dispatch) {
-      var url = '/';
+      var url = 'http://www.reddit.com/r/' + subreddit + '/top.json?t=day&limit=5';
       return fetch(url).then(function(response) {
           if (response.status < 200 || response.status >= 300) {
               var error = new Error(response.statusText);
@@ -41,12 +40,12 @@ var fetchSubdata = function(multireddit) {
       })
       .then(function(data) {
           return dispatch(
-              fetchSubdataSuccess(multiredditData)
+              fetchSubdataSuccess(subreddit, data)
           );
       })
       .catch(function(error) {
           return dispatch(
-              fetchGuessesError(error)
+              fetchSubdataError(error)
           );
       });
   };

@@ -6,9 +6,7 @@ var initialDigestState = {
 };
 
 var multiredditDigestReducer = function(state, action) {
-  console.log('Action:', action);
-  state = state || initialGameState;
-  console.log('State:', state);
+  state = state || initialDigestState;
   if (action.type === actions.NEW_DIGEST) {
     return Object.assign({}, state, {
       multireddit: '',
@@ -16,12 +14,19 @@ var multiredditDigestReducer = function(state, action) {
     });
   }
   else if (action.type === actions.FETCH_SUBDATA_SUCCESS) {
+    // if (multiredditData.length === multireddit.length - 1) {
+    // push hashHistory to /digest
+    // }
+    console.log(state.multiredditData);
     return Object.assign({}, state, {
-      multiredditData: action.subdata
+      multiredditData: state.multiredditData.concat({
+        name: action.name,
+        data: action.data.data
+      })
     });
   }
   else if (action.type === actions.FETCH_SUBDATA_ERROR) {
-    // handle error
+    console.log(action.error);
   }
   return state;
 };

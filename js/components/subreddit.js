@@ -3,15 +3,11 @@ var React = require('react');
 var Post = require('./post');
 
 var Subreddit = function(props) {
-  var posts = Object.keys(props.posts).map(function(postId, index) {
-    var post = props.posts[postId];
-    return (
-      <li key={index}>
-        <Post id={post.id} name={post.title} url={post.url} score={post.score}
-              author={post.author} timeSubmitted={post.date} />
-      </li>
-    );
-  });
+  var posts = [];
+  var postsData = props.data.children;
+  for (var i = 0; i < postsData.length; i++) {
+    posts.push(<Post key={i} title={postsData[i].data.title} data={postsData[i].data} />);
+  }
   return (
     <div className="subreddit">
       <h2>{props.name}</h2>
