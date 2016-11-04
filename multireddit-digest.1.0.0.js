@@ -28699,9 +28699,9 @@
 	    };
 	};
 	
-	var fetchSubdata = function fetchSubdata(subreddit) {
+	var fetchSubdata = function fetchSubdata(numPosts, timePeriod, subreddit) {
 	    return function (dispatch) {
-	        var url = 'http://www.reddit.com/r/' + subreddit + '/top.json?t=day&limit=5';
+	        var url = 'http://www.reddit.com/r/' + subreddit + '/top.json?t=' + timePeriod + '&limit=' + numPosts;
 	        return fetch(url).then(function (response) {
 	            if (response.status < 200 || response.status >= 300) {
 	                var error = new Error(response.statusText);
@@ -29223,9 +29223,12 @@
 	
 	  getDigest: function getDigest() {
 	    var multireddit = this.refs.multireddit.value;
+	    var numPosts = this.refs.numPosts.value;
+	    var timePeriod = this.refs.timePeriod.value;
+	
 	    var subredditArray = processMultireddit(multireddit);
 	    for (var i = 0; i < subredditArray.length; i++) {
-	      this.props.dispatch(actions.fetchSubdata(subredditArray[i]));
+	      this.props.dispatch(actions.fetchSubdata(numPosts, timePeriod, subredditArray[i]));
 	    }
 	    hashHistory.push('/digest');
 	  },
@@ -29239,6 +29242,49 @@
 	        'Paste the link to your Multireddit below:'
 	      ),
 	      React.createElement('input', { type: 'text', ref: 'multireddit' }),
+	      React.createElement('br', null),
+	      React.createElement(
+	        'label',
+	        { htmlFor: 'posts' },
+	        'Max posts to show per sub:'
+	      ),
+	      React.createElement('input', { type: 'number', name: 'posts', ref: 'numPosts' }),
+	      React.createElement('br', null),
+	      React.createElement(
+	        'label',
+	        { htmlFor: 'timePeriod' },
+	        'Time period:'
+	      ),
+	      React.createElement(
+	        'select',
+	        { name: 'timePeriod', ref: 'timePeriod' },
+	        React.createElement(
+	          'option',
+	          { value: 'day' },
+	          'Past 24 Hours'
+	        ),
+	        React.createElement(
+	          'option',
+	          { value: 'week' },
+	          'Past Week'
+	        ),
+	        React.createElement(
+	          'option',
+	          { value: 'month' },
+	          'Past Month'
+	        ),
+	        React.createElement(
+	          'option',
+	          { value: 'year' },
+	          'Past Year'
+	        ),
+	        React.createElement(
+	          'option',
+	          { value: 'all' },
+	          'All Time'
+	        )
+	      ),
+	      React.createElement('br', null),
 	      React.createElement(
 	        'button',
 	        { type: 'button', onClick: this.getDigest },
@@ -29385,7 +29431,7 @@
 	      null,
 	      React.createElement(
 	        "a",
-	        { href: props.data.permalink },
+	        { href: "https://www.reddit.com" + props.data.permalink },
 	        props.title
 	      )
 	    ),
