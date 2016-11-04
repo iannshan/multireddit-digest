@@ -17,7 +17,6 @@ var multiredditDigestReducer = function(state, action) {
     // if (multiredditData.length === multireddit.length - 1) {
     // push hashHistory to /digest
     // }
-    console.log(state.multiredditData);
     return Object.assign({}, state, {
       multiredditData: state.multiredditData.concat({
         name: action.name,

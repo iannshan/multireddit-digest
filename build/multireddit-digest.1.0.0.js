@@ -28652,7 +28652,6 @@
 	    // if (multiredditData.length === multireddit.length - 1) {
 	    // push hashHistory to /digest
 	    // }
-	    console.log(state.multiredditData);
 	    return Object.assign({}, state, {
 	      multiredditData: state.multiredditData.concat({
 	        name: action.name,
@@ -29182,21 +29181,21 @@
 /* 263 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
+	"use strict";
 	
 	var React = __webpack_require__(1);
 	
 	var App = function App(props) {
 	    return React.createElement(
-	        'div',
-	        null,
+	        "div",
+	        { className: "app-container" },
 	        React.createElement(
-	            'h1',
+	            "h1",
 	            null,
-	            'Multireddit Digest'
+	            "Multireddit Digest"
 	        ),
 	        React.createElement(
-	            'div',
+	            "div",
 	            null,
 	            props.children
 	        )
@@ -29241,19 +29240,24 @@
 	        null,
 	        'Paste the link to your Multireddit below:'
 	      ),
+	      React.createElement(
+	        'p',
+	        null,
+	        '(For example: https://www.reddit.com/r/startups+technology+web_design+webdev/)'
+	      ),
 	      React.createElement('input', { type: 'text', ref: 'multireddit' }),
 	      React.createElement('br', null),
 	      React.createElement(
 	        'label',
 	        { htmlFor: 'posts' },
-	        'Max posts to show per sub:'
+	        'Max posts to show per sub: '
 	      ),
-	      React.createElement('input', { type: 'number', name: 'posts', ref: 'numPosts' }),
+	      React.createElement('input', { type: 'number', defaultValue: '5', name: 'posts', ref: 'numPosts' }),
 	      React.createElement('br', null),
 	      React.createElement(
 	        'label',
 	        { htmlFor: 'timePeriod' },
-	        'Time period:'
+	        'Time period: '
 	      ),
 	      React.createElement(
 	        'select',
@@ -29296,9 +29300,15 @@
 	
 	var processMultireddit = function processMultireddit(multireddit) {
 	  var startAt = multireddit.indexOf('r/') + 2;
-	  var subString = multireddit.slice(startAt, -1);
+	  var lastChar = multireddit.charAt(multireddit.length - 1);
+	  var subString;
+	
+	  if (lastChar === '/') {
+	    subString = multireddit.slice(startAt, -1);
+	  } else {
+	    subString = multireddit.slice(startAt);
+	  }
 	  var subredditArray = subString.split('+');
-	  console.log(subredditArray);
 	  return subredditArray;
 	};
 	

@@ -2,7 +2,7 @@ var React = require('react');
 
 var App = function(props) {
     return (
-        <div>
+        <div className="app-container">
             <h1>
                 Multireddit Digest
             </h1>

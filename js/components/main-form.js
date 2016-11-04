@@ -22,12 +22,13 @@ var MainForm = React.createClass({
     return (
         <div className="main-form">
           <h2>Paste the link to your Multireddit below:</h2>
-          <input type="text" ref="multireddit"/>
+          <p>(For example: https://www.reddit.com/r/startups+technology+web_design+webdev/)</p>
+          <input type="text" ref="multireddit" />
           <br/>
-          <label htmlFor="posts">Max posts to show per sub:</label>
-          <input type="number" name="posts" ref="numPosts" />
+          <label htmlFor="posts">Max posts to show per sub: </label>
+          <input type="number" defaultValue="5" name="posts" ref="numPosts" />
           <br/>
-          <label htmlFor="timePeriod">Time period:</label>
+          <label htmlFor="timePeriod">Time period: </label>
           <select name="timePeriod" ref="timePeriod">
             <option value="day">Past 24 Hours</option>
             <option value="week">Past Week</option>
@@ -44,9 +45,15 @@ var MainForm = React.createClass({
 
 var processMultireddit = function(multireddit) {
   var startAt = multireddit.indexOf('r/') + 2;
-  var subString = multireddit.slice(startAt, -1);
+  var lastChar = multireddit.charAt(multireddit.length - 1);
+  var subString;
+
+  if (lastChar === '/') {
+    subString = multireddit.slice(startAt, -1);
+  } else {
+    subString = multireddit.slice(startAt);
+  }
   var subredditArray = subString.split('+');
-  console.log(subredditArray);
   return subredditArray;
 };
 
