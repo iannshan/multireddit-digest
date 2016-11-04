@@ -9,9 +9,12 @@ var actions = require('../actions/index');
 var MainForm = React.createClass({
   getDigest: function() {
     var multireddit = this.refs.multireddit.value;
+    var numPosts = this.refs.numPosts.value;
+    var timePeriod = this.refs.timePeriod.value;
+
     var subredditArray = processMultireddit(multireddit);
     for (var i = 0; i < subredditArray.length; i++) {
-      this.props.dispatch(actions.fetchSubdata(subredditArray[i]));
+      this.props.dispatch(actions.fetchSubdata(numPosts, timePeriod, subredditArray[i]));
     }
     hashHistory.push('/digest');
   },
@@ -20,6 +23,19 @@ var MainForm = React.createClass({
         <div className="main-form">
           <h2>Paste the link to your Multireddit below:</h2>
           <input type="text" ref="multireddit"/>
+          <br/>
+          <label htmlFor="posts">Max posts to show per sub:</label>
+          <input type="number" name="posts" ref="numPosts" />
+          <br/>
+          <label htmlFor="timePeriod">Time period:</label>
+          <select name="timePeriod" ref="timePeriod">
+            <option value="day">Past 24 Hours</option>
+            <option value="week">Past Week</option>
+            <option value="month">Past Month</option>
+            <option value="year">Past Year</option>
+            <option value="all">All Time</option>
+          </select>
+          <br />
           <button type="button" onClick={this.getDigest}>Get Digest!</button>
         </div>
     );

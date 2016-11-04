@@ -24,9 +24,9 @@ var fetchSubdataError = function(error) {
   };
 };
 
-var fetchSubdata = function(subreddit) {
+var fetchSubdata = function(numPosts, timePeriod, subreddit) {
   return function(dispatch) {
-      var url = 'http://www.reddit.com/r/' + subreddit + '/top.json?t=day&limit=5';
+      var url = 'http://www.reddit.com/r/' + subreddit + '/top.json?t=' + timePeriod + '&limit=' + numPosts;
       return fetch(url).then(function(response) {
           if (response.status < 200 || response.status >= 300) {
               var error = new Error(response.statusText);
