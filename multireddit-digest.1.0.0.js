@@ -58,21 +58,26 @@
 	var store = __webpack_require__(257);
 	
 	var App = __webpack_require__(263);
-	var DigestListContainer = __webpack_require__(264);
+	var MainForm = __webpack_require__(264);
+	var DigestListContainer = __webpack_require__(265);
 	
 	var routes = React.createElement(
+	  Provider,
+	  { store: store },
+	  React.createElement(
 	    Router,
 	    { history: hashHistory },
 	    React.createElement(
-	        Route,
-	        { path: '/', component: App },
-	        React.createElement(IndexRoute, { component: MainForm }),
-	        React.createElement(Route, { path: 'digest', component: DigestListContainer })
+	      Route,
+	      { path: '/', component: App },
+	      React.createElement(IndexRoute, { component: MainForm }),
+	      React.createElement(Route, { path: '/digest', component: DigestListContainer })
 	    )
+	  )
 	);
 	
 	document.addEventListener('DOMContentLoaded', function () {
-	    ReactDOM.render(routes, document.getElementById('app'));
+	  ReactDOM.render(routes, document.getElementById('app'));
 	});
 
 /***/ },
@@ -28637,20 +28642,25 @@
 	};
 	
 	var multiredditDigestReducer = function multiredditDigestReducer(state, action) {
-	  console.log('Action:', action);
-	  state = state || initialGameState;
-	  console.log('State:', state);
+	  state = state || initialDigestState;
 	  if (action.type === actions.NEW_DIGEST) {
 	    return Object.assign({}, state, {
 	      multireddit: '',
 	      multiredditData: []
 	    });
 	  } else if (action.type === actions.FETCH_SUBDATA_SUCCESS) {
+	    // if (multiredditData.length === multireddit.length - 1) {
+	    // push hashHistory to /digest
+	    // }
+	    console.log(state.multiredditData);
 	    return Object.assign({}, state, {
-	      multiredditData: action.subdata
+	      multiredditData: state.multiredditData.concat({
+	        name: action.name,
+	        data: action.data.data
+	      })
 	    });
 	  } else if (action.type === actions.FETCH_SUBDATA_ERROR) {
-	    // handle error
+	    console.log(action.error);
 	  }
 	  return state;
 	};
@@ -28666,17 +28676,18 @@
 	var fetch = __webpack_require__(261);
 	
 	var NEW_DIGEST = 'NEW_DIGEST';
-	var newGame = function newGame() {
+	var newDigest = function newDigest() {
 	    return {
 	        type: NEW_DIGEST
 	    };
 	};
 	
 	var FETCH_SUBDATA_SUCCESS = 'FETCH_SUBDATA_SUCCESS';
-	var fetchSubdataSuccess = function fetchSubdataSuccess(data) {
+	var fetchSubdataSuccess = function fetchSubdataSuccess(name, data) {
 	    return {
 	        type: FETCH_SUBDATA_SUCCESS,
-	        subdata: data
+	        name: name,
+	        data: data
 	    };
 	};
 	
@@ -28688,11 +28699,9 @@
 	    };
 	};
 	
-	var fetchSubdata = function fetchSubdata(multireddit) {
-	    //process multireddit url data to get array of subs
-	    //asynchronously fetch the posts for each sub
+	var fetchSubdata = function fetchSubdata(subreddit) {
 	    return function (dispatch) {
-	        var url = '/';
+	        var url = 'http://www.reddit.com/r/' + subreddit + '/top.json?t=day&limit=5';
 	        return fetch(url).then(function (response) {
 	            if (response.status < 200 || response.status >= 300) {
 	                var error = new Error(response.statusText);
@@ -28703,9 +28712,9 @@
 	        }).then(function (response) {
 	            return response.json();
 	        }).then(function (data) {
-	            return dispatch(fetchSubdataSuccess(multiredditData));
+	            return dispatch(fetchSubdataSuccess(subreddit, data));
 	        }).catch(function (error) {
-	            return dispatch(fetchGuessesError(error));
+	            return dispatch(fetchSubdataError(error));
 	        });
 	    };
 	};
@@ -29202,22 +29211,93 @@
 
 	'use strict';
 	
-	// like the ContactListContainer
+	var React = __webpack_require__(1);
+	var connect = __webpack_require__(172).connect;
+	var router = __webpack_require__(196);
+	var hashHistory = router.hashHistory;
+	
+	var actions = __webpack_require__(260);
+	
+	var MainForm = React.createClass({
+	  displayName: 'MainForm',
+	
+	  getDigest: function getDigest() {
+	    var multireddit = this.refs.multireddit.value;
+	    var subredditArray = processMultireddit(multireddit);
+	    for (var i = 0; i < subredditArray.length; i++) {
+	      this.props.dispatch(actions.fetchSubdata(subredditArray[i]));
+	    }
+	    hashHistory.push('/digest');
+	  },
+	  render: function render() {
+	    return React.createElement(
+	      'div',
+	      { className: 'main-form' },
+	      React.createElement(
+	        'h2',
+	        null,
+	        'Paste the link to your Multireddit below:'
+	      ),
+	      React.createElement('input', { type: 'text', ref: 'multireddit' }),
+	      React.createElement(
+	        'button',
+	        { type: 'button', onClick: this.getDigest },
+	        'Get Digest!'
+	      )
+	    );
+	  }
+	});
+	
+	var processMultireddit = function processMultireddit(multireddit) {
+	  var startAt = multireddit.indexOf('r/') + 2;
+	  var subString = multireddit.slice(startAt, -1);
+	  var subredditArray = subString.split('+');
+	  console.log(subredditArray);
+	  return subredditArray;
+	};
+	
+	var mapStateToProps = function mapStateToProps(state, props) {
+	  return {
+	    multireddit: state.multireddit,
+	    multiredditData: state.multiredditData
+	  };
+	};
+	
+	var Container = connect(mapStateToProps)(MainForm);
+	
+	module.exports = Container;
+
+/***/ },
+/* 265 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
 	
 	var React = __webpack_require__(1);
 	var connect = __webpack_require__(172).connect;
 	
 	var actions = __webpack_require__(260);
 	
-	var SubredditList = __webpack_require__(265);
+	var SubredditList = __webpack_require__(266);
 	
 	var DigestListContainer = React.createClass({
 	  displayName: 'DigestListContainer',
 	
 	  render: function render() {
-	    return React.createElement(SubredditList, { multireddit: this.props.multireddit });
+	    return React.createElement(
+	      'div',
+	      null,
+	      React.createElement(SubredditList, { multiredditData: this.props.multiredditData })
+	    );
 	  }
 	});
+	
+	var mapStateToProps = function mapStateToProps(state, props) {
+	  return {
+	    multireddit: state.multireddit,
+	    multiredditData: state.multiredditData
+	  };
+	};
 	
 	var mapStateToProps = function mapStateToProps(state, props) {
 	  return {
@@ -29231,25 +29311,20 @@
 	module.exports = Container;
 
 /***/ },
-/* 265 */
+/* 266 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
 	
-	var Subreddit = __webpack_require__(266);
+	var Subreddit = __webpack_require__(267);
 	
 	var SubredditList = function SubredditList(props) {
-	  var multireddit = Object.keys(props.multireddit).map(function (subredditId, index) {
-	    var subreddit = props.multireddit[subredditId];
-	    return React.createElement(
-	      'li',
-	      { key: index },
-	      React.createElement(Subreddit, { id: subreddit.id, name: subreddit.name,
-	        posts: subreddit.posts })
-	    );
-	  });
+	  var multireddit = [];
+	  for (var i = 0; i < props.multiredditData.length; i++) {
+	    multireddit.push(React.createElement(Subreddit, { key: i, name: props.multiredditData[i].name, data: props.multiredditData[i].data }));
+	  }
 	  return React.createElement(
 	    'ul',
 	    null,
@@ -29260,25 +29335,21 @@
 	module.exports = SubredditList;
 
 /***/ },
-/* 266 */
+/* 267 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
 	
-	var Post = __webpack_require__(267);
+	var Post = __webpack_require__(268);
 	
 	var Subreddit = function Subreddit(props) {
-	  var posts = Object.keys(props.posts).map(function (postId, index) {
-	    var post = props.posts[postId];
-	    return React.createElement(
-	      'li',
-	      { key: index },
-	      React.createElement(Post, { id: post.id, name: post.title, url: post.url, score: post.score,
-	        author: post.author, timeSubmitted: post.date })
-	    );
-	  });
+	  var posts = [];
+	  var postsData = props.data.children;
+	  for (var i = 0; i < postsData.length; i++) {
+	    posts.push(React.createElement(Post, { key: i, title: postsData[i].data.title, data: postsData[i].data }));
+	  }
 	  return React.createElement(
 	    'div',
 	    { className: 'subreddit' },
@@ -29298,7 +29369,7 @@
 	module.exports = Subreddit;
 
 /***/ },
-/* 267 */
+/* 268 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -29306,13 +29377,34 @@
 	var React = __webpack_require__(1);
 	
 	var Post = function Post(props) {
-	  return React.createElement("div", { className: "post" });
+	  return React.createElement(
+	    "div",
+	    { className: "post" },
+	    React.createElement(
+	      "h3",
+	      null,
+	      React.createElement(
+	        "a",
+	        { href: props.data.permalink },
+	        props.title
+	      )
+	    ),
+	    React.createElement(
+	      "p",
+	      null,
+	      "Score: ",
+	      props.data.score,
+	      " Submitted by ",
+	      React.createElement(
+	        "a",
+	        { href: "https://www.reddit.com/user/" + props.data.author },
+	        props.data.author
+	      )
+	    )
+	  );
 	};
 	
 	module.exports = Post;
-	
-	React.createElement(Post, { id: post.id, name: post.title, url: post.url, score: post.score,
-	  author: post.author, timeSubmitted: post.date });
 
 /***/ }
 /******/ ]);
