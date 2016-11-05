@@ -2,7 +2,7 @@ var React = require('react');
 var TestUtils = require('react-addons-test-utils');
 var should = require('chai').should();
 
-var SomeComponent = require('../js/some-component');
+var SomeComponent = require('../js/components/some-component');
 
 describe('Some component', function() {
     it('Renders some component',  function() {
