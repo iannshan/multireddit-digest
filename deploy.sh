@@ -16,7 +16,7 @@ git init
 git config user.name "Shandra Iannucci"
 git config user.email "shandrai@gmail.com"
 
-git remote add upstream "https://$GH_TOKEN@github.com/kitschlich/multireddit-digest.git"
+git remote add upstream "https://kitschlich:$GH_TOKEN@github.com/kitschlich/multireddit-digest.git"
 git fetch upstream
 git reset upstream/gh-pages
 
