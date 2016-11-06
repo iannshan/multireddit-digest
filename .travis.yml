@@ -1,3 +1,10 @@
 language: node_js
 node_js:
-  - "4.2.6"
+- 4.2.6
+script:
+- npm run build
+after_success:
+- bash deploy.sh
+env:
+  global:
+    - secure: kxOtHz0xcORwT3OcKXBMxCVzhQAJNitIsvQSyLENt4A4GvdTWmtDPI3IcNSrUarOTOY8uHE8F7Ff/INAlRuQlK9PedC1NBdLkzrzZze0vUyBZ9UyqoPinWa6El5U9N/+tcFm9/YYNFy7otdK56jw+ZTfiy/wgYDrQXj0SK051qnYCW3U3oQWCh5PMXssskMEX4wkY89SmzKiXaEtsW/wCdv+N8mF6nyq+fz7PDdswYC9lhTTlUxtny3nEdBr8kukEt/cYBLRSqIEmSyAb7PAlMMqGA+1jUbZgizdADPsecXu1Cd+3Zvn1i8ubez7nu/sVBw99LAjW2+eDI8EqqXQxdgPCpjJiEJnqzBOPoncFSV0wqLLtYpwwqNO9UIORf/7vVYq6eyFIk+nJu4nlAgqWjjsyFf3StuJUVbUGewSWxN3gZ0PX1iNGBMoL3pgmWu8/aUo/JJXK7pyf+mGobzkJ3xAJ39z9e7Z5BkqwBtOvQrUDuJ9bqfvPKD+0+nsCC1Q4B8IWGGAKX2xW7d9H31VyXgQFzrAreEzQxFg1cwTUfWxELZ/WFuWPDJG3Kk7lYZJOEjQu6ZPxkDLci97iIy63vkGEJnSZ3ohEJgMkSmsyKFUie/KedhOTjgpciggwuv10hSuRA6wYlvORR53KjSU2f0gwQZ7itwtiEKWZEiSpZk=
