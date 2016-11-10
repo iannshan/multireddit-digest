@@ -1,17 +1,20 @@
 @import url("https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css");
 
 html {
-  background-image: url(img/reddit_wallpaper.jpg);
-  background-repeat: repeat-x;
+  background-color: #cee3f8;
 }
 
 body {
   background-color: rgba(0, 0, 0, 0);
 }
 
+a {
+  color: #369;
+}
+
 .container {
   margin-top: 4em;
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: rgba(255, 255, 255, 1);
   max-height: 85vh;
   min-height: 490px;
   overflow: auto;

@@ -12,10 +12,8 @@ var MainForm = React.createClass({
     var numPosts = this.refs.numPosts.value;
     var timePeriod = this.refs.timePeriod.value;
 
-    var subredditArray = processMultireddit(multireddit);
-    for (var i = 0; i < subredditArray.length; i++) {
-      this.props.dispatch(actions.fetchSubdata(numPosts, timePeriod, subredditArray[i]));
-    }
+    this.props.dispatch(actions.newDigest(multireddit, numPosts, timePeriod));
+
     hashHistory.push('/digest');
   },
   render: function() {
@@ -43,19 +41,6 @@ var MainForm = React.createClass({
   }
 });
 
-var processMultireddit = function(multireddit) {
-  var startAt = multireddit.indexOf('r/') + 2;
-  var lastChar = multireddit.charAt(multireddit.length - 1);
-  var subString;
-
-  if (lastChar === '/') {
-    subString = multireddit.slice(startAt, -1);
-  } else {
-    subString = multireddit.slice(startAt);
-  }
-  var subredditArray = subString.split('+');
-  return subredditArray;
-};
 
 var mapStateToProps = function(state, props) {
   return {

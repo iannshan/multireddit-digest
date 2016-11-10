@@ -28637,21 +28637,28 @@
 	var actions = __webpack_require__(260);
 	
 	var initialDigestState = {
-	  multireddit: '',
+	  subreddits: localStorage.getItem('subreddits') || [],
+	  numPosts: localStorage.getItem('numPosts') || null,
+	  timePeriod: localStorage.getItem('timePeriod') || '',
 	  multiredditData: []
 	};
 	
 	var multiredditDigestReducer = function multiredditDigestReducer(state, action) {
 	  state = state || initialDigestState;
 	  if (action.type === actions.NEW_DIGEST) {
+	    var subreddits = processMultireddit(action.multireddit);
+	
+	    localStorage.setItem('numPosts', action.numPosts);
+	    localStorage.setItem('timePeriod', action.timePeriod);
+	    localStorage.setItem('subreddits', subreddits);
+	
 	    return Object.assign({}, state, {
-	      multireddit: '',
+	      subreddits: subreddits,
+	      numPosts: action.numPosts,
+	      timePeriod: action.timePeriod,
 	      multiredditData: []
 	    });
 	  } else if (action.type === actions.FETCH_SUBDATA_SUCCESS) {
-	    // if (multiredditData.length === multireddit.length - 1) {
-	    // push hashHistory to /digest
-	    // }
 	    return Object.assign({}, state, {
 	      multiredditData: state.multiredditData.concat({
 	        name: action.name,
@@ -28662,6 +28669,20 @@
 	    console.log(action.error);
 	  }
 	  return state;
+	};
+	
+	var processMultireddit = function processMultireddit(multireddit) {
+	  var startAt = multireddit.indexOf('r/') + 2;
+	  var lastChar = multireddit.charAt(multireddit.length - 1);
+	  var subString;
+	
+	  if (lastChar === '/') {
+	    subString = multireddit.slice(startAt, -1);
+	  } else {
+	    subString = multireddit.slice(startAt);
+	  }
+	  var subredditArray = subString.split('+');
+	  return subredditArray;
 	};
 	
 	exports.multiredditDigestReducer = multiredditDigestReducer;
@@ -28675,9 +28696,12 @@
 	var fetch = __webpack_require__(261);
 	
 	var NEW_DIGEST = 'NEW_DIGEST';
-	var newDigest = function newDigest() {
+	var newDigest = function newDigest(multireddit, numPosts, timePeriod) {
 	    return {
-	        type: NEW_DIGEST
+	        type: NEW_DIGEST,
+	        multireddit: multireddit,
+	        numPosts: numPosts,
+	        timePeriod: timePeriod
 	    };
 	};
 	
@@ -29225,10 +29249,8 @@
 	    var numPosts = this.refs.numPosts.value;
 	    var timePeriod = this.refs.timePeriod.value;
 	
-	    var subredditArray = processMultireddit(multireddit);
-	    for (var i = 0; i < subredditArray.length; i++) {
-	      this.props.dispatch(actions.fetchSubdata(numPosts, timePeriod, subredditArray[i]));
-	    }
+	    this.props.dispatch(actions.newDigest(multireddit, numPosts, timePeriod));
+	
 	    hashHistory.push('/digest');
 	  },
 	  render: function render() {
@@ -29308,20 +29330,6 @@
 	  }
 	});
 	
-	var processMultireddit = function processMultireddit(multireddit) {
-	  var startAt = multireddit.indexOf('r/') + 2;
-	  var lastChar = multireddit.charAt(multireddit.length - 1);
-	  var subString;
-	
-	  if (lastChar === '/') {
-	    subString = multireddit.slice(startAt, -1);
-	  } else {
-	    subString = multireddit.slice(startAt);
-	  }
-	  var subredditArray = subString.split('+');
-	  return subredditArray;
-	};
-	
 	var mapStateToProps = function mapStateToProps(state, props) {
 	  return {
 	    multireddit: state.multireddit,
@@ -29349,6 +29357,20 @@
 	var DigestListContainer = React.createClass({
 	  displayName: 'DigestListContainer',
 	
+	  componentDidMount: function componentDidMount() {
+	
+	    var numPosts = this.props.numPosts;
+	    var timePeriod = this.props.timePeriod;
+	    var subreddits = this.props.subreddits;
+	
+	    if (typeof subreddits === 'string') {
+	      subreddits = subreddits.split(',');
+	    }
+	
+	    for (var i = 0; i < subreddits.length; i++) {
+	      this.props.dispatch(actions.fetchSubdata(numPosts, timePeriod, subreddits[i]));
+	    }
+	  },
 	  render: function render() {
 	    return React.createElement(
 	      'div',
@@ -29360,14 +29382,9 @@
 	
 	var mapStateToProps = function mapStateToProps(state, props) {
 	  return {
-	    multireddit: state.multireddit,
-	    multiredditData: state.multiredditData
-	  };
-	};
-	
-	var mapStateToProps = function mapStateToProps(state, props) {
-	  return {
-	    multireddit: state.multireddit,
+	    subreddits: state.subreddits,
+	    numPosts: state.numPosts,
+	    timePeriod: state.timePeriod,
 	    multiredditData: state.multiredditData
 	  };
 	};

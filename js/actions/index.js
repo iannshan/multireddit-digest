@@ -1,9 +1,12 @@
 var fetch = require('isomorphic-fetch');
 
 var NEW_DIGEST = 'NEW_DIGEST';
-var newDigest = function() {
+var newDigest = function(multireddit, numPosts, timePeriod) {
   return {
-    type: NEW_DIGEST
+    type: NEW_DIGEST,
+    multireddit: multireddit,
+    numPosts: numPosts,
+    timePeriod: timePeriod
   };
 };
 

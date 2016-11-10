@@ -1,10 +1,11 @@
 language: node_js
 node_js:
-- 4.2.6
+  - 4.2.6
 script:
-- npm run build
+  - npm run test
+  - npm run build
 after_success:
-- bash deploy.sh
+  - bash deploy.sh
 env:
   global:
   - secure: S5QwPGwnnDdlsy4B7Eamu0e7rCA+Gfu9E+4LkL/fvI1fCyseV5B/MWtJO9/2F78cku1O//YiPmjBKwBysZkBIPbthEr9hYGVeltgyvszqjrNpAuLdF4JqqP/aBql/lLD1wRFZpJYsc9ytt+aUD4mOlLV/qzyQ1l8QwqxvkrtYMI2K12MCfJDlWysqPqMHnmxT77iNQ3dxOQ9lRsBivXGsH3jrEnIbd7+TgjRxha7wKHOkt7Zh6MzOj10qrF01g3AErhnA1wYtcrlGLFI4n481zbC71QTwEO3kSN2tvlFIp2NopHfE6Ki6z0yhdtZD5Rg4WYgESfzZkZFIofkNTI3YnxXh004jEvgM6iL0oXogpepBJCmKtGZr1XOXh1CjFQxwueFiRg774YXqPOrmut/DvHz5eUs4O2gsDlWkF4KmZjy29jJGl4uFn8DZjZ53CIo68aOfJ4o4LnsAMqpFU44dgqW203CNgrCS8bh89TzkGVXIYGiWWRTRRRGmt2r9Opw3ddH2ndKyOl1UfC/ZTV7es89ET8o3/DfZhSnTnL1k84+sGQ/D1vRU4hfQj5HKepu4+JcmLN4Nhq5vE/mU/ByeiSfUHAETTFz1Cx36mSfi6HdAFZeAXj1PdEXzOg3LC2UMpCrofNPuOvQ4frpmR0wZssMg8T1BJ9wIdyoNvQ0Wh0=

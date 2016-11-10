@@ -6,6 +6,20 @@ var actions = require('../actions/index');
 var SubredditList = require('./subreddit-list');
 
 var DigestListContainer = React.createClass({
+  componentDidMount: function() {
+
+    var numPosts = this.props.numPosts;
+    var timePeriod = this.props.timePeriod;
+    var subreddits = this.props.subreddits;
+
+    if (typeof subreddits === 'string') {
+      subreddits = subreddits.split(',');
+    }
+
+    for (var i = 0; i < subreddits.length; i++) {
+      this.props.dispatch(actions.fetchSubdata(numPosts, timePeriod, subreddits[i]));
+    }
+  },
   render: function() {
     return (
       <div>
@@ -17,14 +31,9 @@ var DigestListContainer = React.createClass({
 
 var mapStateToProps = function(state, props) {
   return {
-    multireddit: state.multireddit,
-    multiredditData: state.multiredditData
-  };
-};
-
-var mapStateToProps = function(state, props) {
-  return {
-    multireddit: state.multireddit,
+    subreddits: state.subreddits,
+    numPosts: state.numPosts,
+    timePeriod: state.timePeriod,
     multiredditData: state.multiredditData
   };
 };
