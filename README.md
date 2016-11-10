@@ -1,5 +1,8 @@
 # Multireddit Digest App
 
+### Demo
+[https://kitschlich.github.io/multireddit-digest/](https://kitschlich.github.io/multireddit-digest/)
+
 ### Screenshots
 ![Screen 1](http://shandrai.com/media/multireddit_screen_1.png)
 ![Screen 2](http://shandrai.com/media/multireddit_screen_2.png)
